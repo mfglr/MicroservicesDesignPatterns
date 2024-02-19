@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Order.Api.Dtos;
 using Order.Api.Entities;
 using SharedLibrary;
+using SharedLibrary.Abstracts;
+using SharedLibrary.Events;
 
 namespace Order.Api.Controllers
 {
@@ -12,12 +14,12 @@ namespace Order.Api.Controllers
     {
 
         private readonly AppDbContext _context;
-        private IPublishEndpoint _publisher;
+        private readonly ISendEndpointProvider _sendEndpointProvider;
 
-        public OrdersController(AppDbContext context, IPublishEndpoint publisher)
+        public OrdersController(AppDbContext context, IPublishEndpoint publisher, ISendEndpointProvider sendEndpointProvider)
         {
             _context = context;
-            _publisher = publisher;
+            _sendEndpointProvider = sendEndpointProvider;
         }
 
         [HttpPost]
@@ -44,7 +46,7 @@ namespace Order.Api.Controllers
             await _context.AddAsync(order);
             await _context.SaveChangesAsync();
 
-            var @event = new OrderCreatedEvent()
+            var @event = new OrderCreatedRequestEvent()
             {
                 BuyerId = request.BuyerId,
                 OrderId = order.Id,
@@ -62,7 +64,8 @@ namespace Order.Api.Controllers
                     ProductId = x.ProductId
                 }).ToList()
             };
-           await _publisher.Publish(@event);
+            var sender = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue:{QueueNames.OrderSaga}"));
+            await sender.Send<IOrderCreatedRequestEvent>(@event);
 
             return Ok();
         }
