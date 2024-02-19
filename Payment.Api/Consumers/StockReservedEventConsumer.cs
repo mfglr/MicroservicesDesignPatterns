@@ -23,11 +23,12 @@ namespace Payment.Api.Consumers
                     BuyerId = context.Message.BuyerId,
                     Message = "",
                     OrderId = context.Message.OrderId,
+                    OrderItems = context.Message.OrderItems
                 });
                 return;
             }
 
-            await _publishser.Publish(new PaymentSuccessedEvent()
+            await _publishser.Publish(new PaymentCompletedEvent()
             {
                 BuyerId = context.Message.BuyerId,
                 OrderId = context.Message.OrderId,

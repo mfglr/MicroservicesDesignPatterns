@@ -17,12 +17,17 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<OrderCreatedEventConsumer>();
+    x.AddConsumer<PaymentFailedEventConsumer>();
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host("localhost");
         cfg.ReceiveEndpoint(QueueNames.Stock_OrderCreateEventQueueName,e =>
         {
             e.ConfigureConsumer<OrderCreatedEventConsumer>(context);
+        });
+        cfg.ReceiveEndpoint(QueueNames.Stock_PaymentFailedEventQueueName, e =>
+        {
+            e.ConfigureConsumer<PaymentFailedEventConsumer>(context);
         });
     });
 });
