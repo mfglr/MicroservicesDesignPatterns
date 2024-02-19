@@ -4,5 +4,6 @@
     {
         public readonly static string Stock_OrderCreateEventQueueName = "Stock_OrderCreateEventQueueName";
         public readonly static string StockReservedEventQueueName = "StockReservedEventQueueName";
+        public readonly static string Payment_StockReservedEventQueueName = "Payment_StockReservedEventQueueName";
     }
 }
