@@ -24,7 +24,7 @@ namespace Order.Api.Controllers
         public async Task<IActionResult> Create(CreateOrderDto request)
         {
             
-            var order = new Entities.Order()
+                var order = new Entities.Order()
             {
                 BuyerId = request.BuyerId,
                 Address = new Address
