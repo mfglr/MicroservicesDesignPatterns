@@ -1,6 +1,8 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using SharedLibrary;
 using Stock.Api;
+using Stock.Api.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +16,19 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumer<OrderCreatedEventConsumer>();
+    x.AddConsumer<StockCompansableQueueMessageConsumer>();
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host("localhost");
+        cfg.ReceiveEndpoint(QueueNames.Stock_OrderCreateEventQueueName, e =>
+        {
+            e.ConfigureConsumer<OrderCreatedEventConsumer>(context);
+        });
+        cfg.ReceiveEndpoint(QueueNames.StockCompansableTransactionMessageQueue, e =>
+        {
+            e.ConfigureConsumer<StockCompansableQueueMessageConsumer>(context);
+        });
     });
 });
 

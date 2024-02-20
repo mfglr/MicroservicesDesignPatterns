@@ -53,7 +53,7 @@ namespace Order.Api.Controllers
                 Payment = new PaymentMessage()
                 {
                     CardName = request.Payment.CardName,
-                    CartNumber = request.Payment.CartNumber,
+                    CardNumber = request.Payment.CardNumber,
                     CVV = request.Payment.CVV,
                     Expiration = request.Payment.Expiration,
                     TotalPrice = request.OrderItems.Sum(x => x.Price * x.Count),

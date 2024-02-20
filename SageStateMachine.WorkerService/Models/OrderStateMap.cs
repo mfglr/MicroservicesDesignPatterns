@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SageStateMachine.WorkerService.Models
 {
-    public class OrderStateMap : SagaClassMap<OrderStateInstance>
+    public class OrderStateMap : SagaClassMap<OrderState>
     {
-        protected override void Configure(EntityTypeBuilder<OrderStateInstance> entity, ModelBuilder model)
+        protected override void Configure(EntityTypeBuilder<OrderState> entity, ModelBuilder model)
         {
             base.Configure(entity, model);
         }
